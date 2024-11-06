@@ -15,3 +15,9 @@ To push:
 1. Type `git add .` in the terminal
 2. Type `git commit -m "{comments}"`
 3. Type `git push --set-upstream origin {branch_name}`
+
+## Ensuring version is up-to-date before pushing
+1. Type `git checkout main` in terminal
+2. Type `git pull`
+3. Type `git checkout {branch_name}`
+4. Type `git rebase main`
