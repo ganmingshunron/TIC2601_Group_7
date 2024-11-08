@@ -7,9 +7,12 @@
 4. `npm install` to download the modules
 5. `npm start` to open up the webpage
 
-## Creating Branch & Push
+## Creating Branch & Working on Branch (Always work on branch)
 Create Branch:
 1. Type `git checkout -b {branch_name}` in the terminal
+   
+Work on Branches:
+1. Type `git checkout {branch_name}` to change branches 
    
 To push:
 1. Type `git add .` in the terminal
