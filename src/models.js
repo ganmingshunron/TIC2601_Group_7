@@ -119,17 +119,98 @@ const Product = sequelize.define('Product',{
     freezeTableName: true
 });
 
-const Cart = sequelize.define('Cart',{},
+const Cart = sequelize.define('Cart',{
+    Quantity:{
+        type:DataTypes.INTEGER,
+        allowNull: false
+    }
+},
     {
     freezeTableName: true
 });
 
+const Transaction = sequelize.define('Transaction',{
+    Tid:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        unique: true
+    },
+
+    Tstatus:{
+        type: DataTypes.STRING(20),
+        allowNull: false
+    },
+
+    Tdate:{
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+            customValidator(value) {
+                if (new Date(value) > new Date()) {
+                    throw new Error("Date is in the future!");
+                }
+            }
+        }
+    },
+
+    Tamount:{
+        type: DataTypes.REAL
+    }
+},{
+    freezeTableName: true
+});
+
+const Logistics = sequelize.define('Logistics',{
+    Lid:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        unique: true
+    },
+
+    LshipmentDate:{
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+            customValidator(value) {
+                if (new Date(value) > new Date()) {
+                    throw new Error("Date is in the future!");
+                }
+            }
+        }
+    },
+
+    Courier:{
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+
+    DeliveryStatus:{
+        type: DataTypes.STRING(20),
+        allowNull: false
+    }
+
+},{
+    freezeTableName: true
+});
+
+
+
 Customer.hasOne(Cart);
 Cart.belongsTo(Customer);
+
+Cart.hasMany(Product);
+Product.hasMany(Cart);
+
+Transaction.hasOne(Customer);
 
 Vendor.hasMany(Product);
 Product.belongsTo(Vendor);
 
+Logistics.belongsTo(Vendor, {foreignKey: 'DeliverFrom'})
+Logistics.belongsTo(Customer, {foreignKey: 'DeliverTo'})
+
 // sequelize.sync();
 
-module.exports = { sequelize, Customer, Vendor, Product, Cart};
+module.exports = { sequelize, Customer, Vendor, Product, Cart, Transaction, Logistics};
