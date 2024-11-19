@@ -1,5 +1,8 @@
+/* Ensure .App and .App-header take up full width but don't overflow */
 .App {
   text-align: center;
+  width: 100%;   /* Ensure the app container takes up full width */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .App-logo {
@@ -13,26 +16,142 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Make the header sticky */
+header {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1000;
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%; 
+  overflow-x: hidden;
+}
+
+/* Add padding to the body so the content doesn't overlap when the header is sticky */
+body {
+  padding-top: 60px; 
+  overflow-x: hidden; 
+}
+
+/* Container for sorting buttons */
+.sort-buttons-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  justify-content: flex-end;
+  margin: 20px 0;
+  width: 100%;  
+  box-sizing: border-box; 
+}
+
+/* Individual sorting buttons */
+.sort-buttons-container button {
+  background-color: #007bff;
   color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.sort-buttons-container button.active {
+  background-color: #ff0000;
+  color: white;
+  border-color: #007bff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Ensure that the inline container does not overflow */
+.inline {
+  display: flex;
+  flex-direction: row;
+  width: 100%;  
+  justify-content: space-evenly;
+  box-sizing: border-box; 
+}
+
+/* Home and Login Button Base Styles */
+button {
+  background-color: #007bff;        /* Blue background */
+  color: white;                     /* White text */
+  font-size: 16px;                   /* Font size */
+  padding: 12px 30px;                /* Padding inside buttons */
+  border: none;                     /* Remove default border */
+  border-radius: 25px;              /* Rounded corners */
+  cursor: pointer;                  /* Pointer cursor on hover */
+  transition: all 0.3s ease;         /* Smooth transition on hover */
+  text-align: center;                /* Center text inside button */
+  display: inline-block;             /* Align buttons inline */
+  margin: 10px;                      /* Margin around buttons */
+}
+
+/* Hover and Focus Effects */
+button:hover,
+button:focus {
+  background-color: #0056b3;        /* Darker blue on hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+  transform: scale(1.05);            /* Slight zoom effect */
+}
+
+/* Active Button State (Clicked) */
+button:active {
+  background-color: #003f7d;        /* Even darker blue when clicked */
+  transform: scale(0.98);            /* Slight shrink when clicked */
+}
+
+/* Add a smooth transition to text color change */
+button:hover {
+  color: #ffffff;                   /* Keep text color white on hover */
+}
+
+/* Ensure that tiles fit within their container without overflowing */
+.inline-tile {
+  display: flex;
+  flex-direction: row;
+  width: 100%;  
+  max-width: 100%;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* Style container for tiles */
+.tiles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%; 
+  box-sizing: border-box;
+}
+
+/* Style tiles and ensure they scale properly */
+.tile {
+  flex: 1 0 300px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+  box-sizing: border-box;
+  max-width: 344.33px; 
+}
+
+.tile:hover {
+  transform: scale(1.05);
+}
+
+/* Style container for page numbers */
+.page-numbers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Style the active page number */
+.page-numbers button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
 }
