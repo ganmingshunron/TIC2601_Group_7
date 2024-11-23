@@ -1,9 +1,10 @@
 const models = require('./models');
 
+/* Function to delete current DB and load new data*/
 async function loadData(){
     models.Customer.findByPk(1).then((cust1)=>{
 
-        if(cust1 !== null){ //Delete existing data
+        if(cust1 !== null){ /*Delete existing data*/
             const modelsToTruncate = Object.values(models);
 
             Promise.all(
@@ -27,6 +28,7 @@ async function loadData(){
     })
 }
 
+/* Initialise all data */
 function populateData(){
     console.log('Creating new database...')
 

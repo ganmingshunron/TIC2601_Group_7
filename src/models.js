@@ -15,7 +15,8 @@ const Customer = sequelize.define('Customer', {
         type:DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
-        unique: true
+        unique: true,
+        autoIncrement: true
     },
     Cname: {
         type: DataTypes.STRING(100),
@@ -42,7 +43,8 @@ const Vendor = sequelize.define('Vendor',{
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
-        unique: true
+        unique: true,
+        autoIncrement: true
     },
 
     Vname:{
@@ -68,7 +70,8 @@ const Product = sequelize.define('Product',{
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
-        unique: true
+        unique: true,
+        autoIncrement: true
     },
 
     Pname:{
@@ -82,7 +85,7 @@ const Product = sequelize.define('Product',{
     },
 
     Pcat:{
-        type: DataTypes.STRING(255),    //need to check again on how to do this
+        type: DataTypes.STRING(255),
         allowNull: false
     },
 
@@ -134,7 +137,8 @@ const Transaction = sequelize.define('Transaction',{
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
-        unique: true
+        unique: true,
+        autoIncrement: true
     },
 
     Tstatus:{
@@ -200,8 +204,8 @@ const Logistics = sequelize.define('Logistics',{
 Customer.hasOne(Cart);
 Cart.belongsTo(Customer);
 
-Cart.hasMany(Product);
-Product.hasMany(Cart);
+Cart.belongsTo(Product, { foreignKey: 'ProductPid' });
+Product.hasMany(Cart, { foreignKey: 'ProductPid' });
 
 Transaction.hasOne(Customer);
 

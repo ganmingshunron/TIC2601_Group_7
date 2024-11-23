@@ -1,117 +1,126 @@
-import { useEffect, useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import Header from "../components/Header";
 
-/* Refresh Function */ 
-const handleRefresh = () => {
-    window.location.reload();  // Reloads the entire page
-  };
-
-/* Generate Header Function */ 
-function Header(){
-    return(
-        <div className = "inline">
-            <button onClick={handleRefresh}>Home</button>
-            <h1> Welcome to Shophee!</h1>
-            <Link to='/Login'><button >Login</button></Link>
-        </div>
-    )
-}
-
-
-export default function HomeLayout(){
+export default function HomeLayout() {
     const [data, setData] = useState([]);
-    const [sortedData, setSortedData] = useState([]);   /* New state to hold sorted data */ 
-    const [sortType, setSortType] = useState("");       /* Track the current sort type */
-    const [currentPage, setCurrentPage] = useState(1);  /* Current page for pagination */
-    const [productsPerPage] = useState(8);              /* Number of products per page */
+    const [productsPerPage] = useState(8); // Specify no. of products per page
+    const [sortBy, setSortBy] = useState(''); // Sort by: Price, Vendor, Alphabetical
+    const [sortOrder, setSortOrder] = useState('asc'); // Sort by: Asc/Desc
+    const [currentPage, setCurrentPage] = useState(1); // Track current page
+    const [totalPages, setTotalPages] = useState(0); // Total no. pages from backend
+    const searchInputRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
-
-    const fetchdata = async() => {
-        const response = await fetch('http://localhost:3001/home');
-        const data = await response.json();
-        setData(data);
-        setSortedData(data);    /* Set default data for initial load */
-        console.log(data);
-    }
-    useEffect(() => {
-        fetchdata();
-    },[])
-
-    /* Sorting Function */
-    const sortData = (type) => {
-    let sorted = [...data]; /* Copy data array */
-
-    switch (type) {
-        case "price":
-            sorted.sort((a, b) => a.Pprice - b.Pprice); /* Sort Price */
-            break;
-        case "vendor":
-            sorted.sort((a, b) => a.Vname.localeCompare(b.Vname)); /* Sort Vendor */
-            break;
-        case "alphabet":
-            sorted.sort((a, b) => a.Pname.localeCompare(b.Pname)); /* Sort Name */
-            break;
-        default:
-            break;
+    // Fetch data
+    const fetchData = async () => {
+    try {
+        const response = await fetch(
+        `http://localhost:3001/?page=${currentPage}&limit=${productsPerPage}&sortBy=${sortBy}&sortOrder=${sortOrder}&q=${searchQuery}`
+        );
+        
+        if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        setSortedData(sorted); /* Set current sorted data */
-        setSortType(type); /* Set current sorted data type */
+        const data = await response.json();
+        setData(data.items || []);
+        setTotalPages(data.totalPages || 0);
+        setCurrentPage(data.currentPage || 1);
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setData([]);
+    }
+  };
+
+    // Fetch new data
+    useEffect(() => {
+        fetchData();
+    }, [currentPage, sortBy, sortOrder, searchQuery]);
+
+    // Update sorting type
+    const sortData = (type) => {
+        setSortBy(type); // Update sort
+        setCurrentPage(1); // Make user go back to first page
+        console.log(`Sorting by: ${type}, Order: ${sortOrder}`);
+        fetchData(); // Fetch data with new sorting
+    };
+    
+    // Toggle Sort (asc/desc)
+    const toggleSortOrder = () => {
+        const newOrder = sortOrder === "asc" ? "desc" : "asc";
+        setSortOrder(newOrder);
+        console.log(`Toggled sorting order to: ${newOrder}`);
+        fetchData(); // Fetch data with new toggle
     };
 
+    // Pagination
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        console.log(`Page changed to: ${pageNumber}`);
+    };
 
-    /* Get current page's products */
-    const indexOfLastProduct = currentPage * productsPerPage; /* index of last product */
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage; /* index of first product */
-    const currentProducts = sortedData.slice(indexOfFirstProduct, indexOfLastProduct); /* get products for current page */
+    // Search Address/Bar
+    const handleSearch = () => {
+        const searchValue = searchInputRef.current.value;
+        setSearchQuery(searchValue);
+        setCurrentPage(1);
+        console.log(`Search initiated for: "${searchValue}"`);
+    };
 
-    /* Change page */
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    /* Pagination Controls */
-    const totalPages = Math.ceil(sortedData.length / productsPerPage); /* Calculate total pages */
-
-    return(
+    return (
         <>
             <header>
-                <Header />
+                <Header/>
             </header>
 
-            <div className="sort-buttons-container">
-                <button onClick={() => sortData("price")}>SORT BY PRICE</button>
-                <button onClick={() => sortData("vendor")}>SORT BY VENDOR</button>
-                <button onClick={() => sortData("alphabet")}>SORT BY ALPHABET</button>
+            {/* Search and Sort button Cotainer*/}
+            <div className="search-sort-container">
+                <input type="text" ref={searchInputRef} placeholder="Search products"/>
+                <button onClick={handleSearch}>Search</button>
+
+                <div className="sort-buttons-container">
+                    <button onClick={() => sortData("Pprice")}>SORT BY PRICE</button>
+                    <button onClick={() => sortData("Vname")}>SORT BY VENDOR</button>
+                    <button onClick={() => sortData("Pname")}>SORT BY ALPHABET</button>
+                    <button onClick={toggleSortOrder}>
+                        ({sortOrder === "asc" ? "Ascending" : "Descending"})
+                    </button>
+                </div>
+
             </div>
 
-            <section className="tiles-container"> {/*Container to contain tiles*/}
-                {
-                    currentProducts.map(function (data) {
-                        return (
-                            <div className="tile" key={data.Pname}>
-                                <img src={data.Pimg} width="150px" height="150px" alt={data.Pname} />
-                                <h2>{data.Pname}</h2>
-                                <div className="inline-tile">
-                                    <p>Price: ${data.Pprice}</p>
-                                    <p>Stock: {data.Pstock}</p>
-                                </div>
-                                <p>Sold by: {data.Vname}</p>
-                            </div>
-                        );
-                    })
-                }
+            {/* Tiles Container for Products */}
+            <section className="tiles-container">
+                {data && data.length > 0 ? (
+                    data.map((product) => (
+                    <div className="tile" key={product.Pname}>
+                        <img src={product.Pimg} width="150px" height="150px" alt={product.Pname} />
+                        <h2>{product.Pname}</h2>
+                        <div className="inline-tile">
+                            <p>Price: ${product.Pprice}</p>
+                            <p>Stock: {product.Pstock}</p>
+                        </div>
+                        <p>Sold by: {product.Vname}</p>
+                    </div>
+                    ))
+                ) : (
+                    <p>No products found.</p>
+                )}
             </section>
 
-            {/* Page Number Buttons */}
+            {/* Pagination Buttons */}
             <div className="page-numbers">
                 {Array.from({ length: totalPages }, (_, index) => (
-                    <button key={index + 1}
+                <button
+                    key={index + 1}
                     onClick={() => paginate(index + 1)}
-                    className={currentPage === index + 1 ? 'active' : ''}>
+                    className={currentPage === index + 1 ? "active" : ""}
+                >
                     {index + 1}
-                    </button>
+                </button>
                 ))}
             </div>
-
         </>
-    )
+    );
 }
