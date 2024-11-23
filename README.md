@@ -1,26 +1,11 @@
 # TIC Group 7
+## Members
+Javen Lim Jia Hao         A0287548J
+Tian Hadi Erid Adam       A0287767A
+Tan Shi Hao               A0287780M
+Gan Ming Shun Ron         A0287537M
 
-## Initialisation
-1. Install git from https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
-2. Create new folder and open it using Visual Studio Code
-3. Open terminal and type `git clone https://github.com/ganmingshunron/TIC2601_Group_7.git`
-4. `npm install` to download the modules (dont force fix)
-5. `npm start` to open up the webpage
-
-## Creating Branch & Working on Branch (Always work on branch)
-Create Branch:
-1. Type `git checkout -b {branch_name}` in the terminal
-   
-Work on Branches:
-1. Type `git checkout {branch_name}` to change branches 
-   
-To push:
-1. Type `git add .` in the terminal
-2. Type `git commit -m "{comments}"`
-3. Type `git push --set-upstream origin {branch_name}`
-
-## Ensuring version is up-to-date before pushing
-1. Type `git checkout main` in terminal
-2. Type `git pull`
-3. Type `git checkout {branch_name}`
-4. Type `git rebase main`
+## Information about how to run
+1. `npm install`
+2. Run Backend.js to generate DB and server
+3. `npm start`
